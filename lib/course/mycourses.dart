@@ -1,6 +1,7 @@
 // import 'package:elearning/data.dart';
 import 'package:elearning/certificate_page.dart';
 import 'package:elearning/course/course_detail.dart';
+import 'package:elearning/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../api/api.dart';
@@ -126,15 +127,19 @@ class _MyCoursesState extends State<MyCourses> {
             ),
             SizedBox(height: 20),
             // Text("data"),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (_) => CertificatePage()),
-            //     );
-            //   },
-            //   child: Text("Certificate", style: TextStyle(fontSize: 16)),
-            // ),
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Testing notification...')),
+                );
+                NotificationService.instance.showNotification(
+                  id: 0,
+                  title: "Ayo Lanjutkan Belajarmu!",
+                  body: "This is a test notification from Ignisia.",
+                );
+              },
+              child: Text("Test Notification", style: TextStyle(fontSize: 16)),
+            ),
             ListView.builder(
               padding: EdgeInsets.zero,
               shrinkWrap: true,

@@ -1,4 +1,5 @@
 import 'package:elearning/app_theme.dart';
+import 'package:elearning/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:elearning/splash_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +7,8 @@ import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await NotificationService.instance.init();
   await initializeDateFormatting('id_ID', null);
   runApp(const MyApp());
 }
