@@ -25,6 +25,49 @@ class CourseDetailPageState extends State<CourseDetailPage> {
   bool isOwned = false;
   int userId = 0;
 
+  final Map<String, Gradient> courseGradients = {
+    "course_1": RadialGradient(
+      colors: [
+        Color.fromARGB(255, 2, 34, 71),
+        Color.fromARGB(255, 11, 81, 161),
+      ],
+      center: Alignment.bottomRight,
+      radius: 1.0,
+    ),
+    "course_2": RadialGradient(
+      colors: [
+        Color.fromARGB(255, 41, 2, 71),
+        Color.fromARGB(255, 73, 11, 161),
+      ],
+      center: Alignment.bottomRight,
+      radius: 1.0,
+    ),
+    "course_3": RadialGradient(
+      colors: [
+        Color.fromARGB(255, 71, 47, 2),
+        Color.fromARGB(255, 161, 96, 11),
+      ],
+      center: Alignment.bottomRight,
+      radius: 1.0,
+    ),
+    "course_4": RadialGradient(
+      colors: [
+        Color.fromARGB(255, 98, 36, 28),
+        Color.fromARGB(255, 172, 74, 61),
+      ],
+      center: Alignment.bottomRight,
+      radius: 1.0,
+    ),
+    "course_5": RadialGradient(
+      colors: [
+        Color.fromARGB(255, 9, 102, 45),
+        Color.fromARGB(255, 10, 143, 70),
+      ],
+      center: Alignment.bottomRight,
+      radius: 1.0,
+    ),
+  };
+
   @override
   void initState() {
     super.initState();
@@ -168,13 +211,29 @@ class CourseDetailPageState extends State<CourseDetailPage> {
                   tag: 'course-hero-${course['id']}',
                   child: Container(
                     decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color.fromARGB(255, 17, 17, 17),
-                          const Color.fromARGB(255, 74, 74, 74),
-                        ],
-                        center: Alignment.bottomRight,
-                        radius: 2.0,
+                      gradient:
+                          courseGradients[course['logo_url']] ??
+                          courseGradients
+                              .values
+                              .first, // fallback kalau tidak ada
+                    ),
+                    // Align the image first, then apply a translation on x/y axis.
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Transform.translate(
+                        offset: const Offset(
+                          -20,
+                          10,
+                        ), // x, y in logical pixels (adjust as needed)
+                        child: Opacity(
+                          opacity: 0.8,
+                          child: Image.asset(
+                            color: Colors.black38,
+                            'lib/assets/${course['logo_url']}.png',
+                            width: 200,
+                            height: 200,
+                          ),
+                        ),
                       ),
                     ),
                   ),

@@ -24,6 +24,49 @@ class _SearchPageState extends State<SearchPage> {
   int userId = 0;
   List<int> ownedCourseIds = [];
 
+  final Map<String, Gradient> courseGradients = {
+    "course_1": RadialGradient(
+      colors: [
+        Color.fromARGB(255, 2, 34, 71),
+        Color.fromARGB(255, 11, 81, 161),
+      ],
+      center: Alignment.bottomRight,
+      radius: 1.0,
+    ),
+    "course_2": RadialGradient(
+      colors: [
+        Color.fromARGB(255, 41, 2, 71),
+        Color.fromARGB(255, 73, 11, 161),
+      ],
+      center: Alignment.bottomRight,
+      radius: 1.0,
+    ),
+    "course_3": RadialGradient(
+      colors: [
+        Color.fromARGB(255, 71, 47, 2),
+        Color.fromARGB(255, 161, 96, 11),
+      ],
+      center: Alignment.bottomRight,
+      radius: 1.0,
+    ),
+    "course_4": RadialGradient(
+      colors: [
+        Color.fromARGB(255, 98, 36, 28),
+        Color.fromARGB(255, 172, 74, 61),
+      ],
+      center: Alignment.bottomRight,
+      radius: 1.0,
+    ),
+    "course_5": RadialGradient(
+      colors: [
+        Color.fromARGB(255, 9, 102, 45),
+        Color.fromARGB(255, 10, 143, 70),
+      ],
+      center: Alignment.bottomRight,
+      radius: 1.0,
+    ),
+  };
+
   @override
   void initState() {
     super.initState();
@@ -253,49 +296,11 @@ class _SearchPageState extends State<SearchPage> {
                               borderRadius: BorderRadius.circular(12),
                               child: Container(
                                 decoration: BoxDecoration(
-                                  gradient: [
-                                    RadialGradient(
-                                      colors: [
-                                        const Color.fromARGB(255, 2, 34, 71),
-                                        const Color.fromARGB(255, 11, 81, 161),
-                                      ],
-                                      center: Alignment.bottomRight,
-                                      radius: 1.0,
-                                    ),
-
-                                    RadialGradient(
-                                      colors: [
-                                        const Color.fromARGB(255, 41, 2, 71),
-                                        const Color.fromARGB(255, 73, 11, 161),
-                                      ],
-                                      center: Alignment.bottomRight,
-                                      radius: 1.0,
-                                    ),
-                                    RadialGradient(
-                                      colors: [
-                                        const Color.fromARGB(255, 71, 47, 2),
-                                        const Color.fromARGB(255, 161, 96, 11),
-                                      ],
-                                      center: Alignment.bottomRight,
-                                      radius: 1.0,
-                                    ),
-                                    RadialGradient(
-                                      colors: [
-                                        const Color.fromARGB(255, 98, 36, 28),
-                                        const Color.fromARGB(255, 172, 74, 61),
-                                      ],
-                                      center: Alignment.bottomRight,
-                                      radius: 1.0,
-                                    ),
-                                    RadialGradient(
-                                      colors: [
-                                        const Color.fromARGB(255, 9, 102, 45),
-                                        const Color.fromARGB(255, 10, 143, 70),
-                                      ],
-                                      center: Alignment.bottomRight,
-                                      radius: 1.0,
-                                    ),
-                                  ][index % 5],
+                                  gradient:
+                                      courseGradients[course['logo_url']] ??
+                                      courseGradients
+                                          .values
+                                          .first, // fallback kalau tidak ada
                                 ),
 
                                 child: Stack(
@@ -307,7 +312,7 @@ class _SearchPageState extends State<SearchPage> {
                                         opacity: 0.5,
                                         child: Image.asset(
                                           color: Colors.black38,
-                                          'lib/assets/course_${index + 1}.png',
+                                          'lib/assets/${course['logo_url']}.png',
                                           width: 130,
                                           height: 130,
                                         ),

@@ -31,9 +31,11 @@ class HomeState extends State<Home> {
   bool isLoadingCourses = true;
   bool isLoadingWorkshops = true;
   bool isLoadingSeminars = true;
+  bool isLoadingUserCourses = true;
   List<dynamic> courses = [];
   List<dynamic> seminars = [];
   List<dynamic> workshops = [];
+  List<dynamic> ownedCourses = [];
 
   @override
   void initState() {
@@ -43,6 +45,7 @@ class HomeState extends State<Home> {
     _loadSeminars();
     loadWorkshops();
     _getCurrentLocation();
+    loadUserDataAndCourses();
   }
 
   Future<void> loadWorkshops() async {
@@ -55,6 +58,19 @@ class HomeState extends State<Home> {
     } catch (e) {
       setState(() => isLoadingWorkshops = false);
     }
+  }
+
+  Future<void> loadUserDataAndCourses() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    final id = prefs.getInt('user_id') ?? 0;
+
+    final fetchOwnedCourses = await getOwnedCourses(id);
+
+    setState(() {
+      ownedCourses = fetchOwnedCourses;
+      isLoadingUserCourses = false;
+    });
   }
 
   Future<void> loadUserData() async {
@@ -272,6 +288,9 @@ class HomeState extends State<Home> {
                       physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.only(right: 12),
                       itemBuilder: (context, index) {
+                        final isOwned = ownedCourses.any(
+                          (c) => c['id'] == courses[index]['id'],
+                        );
                         final course = courses[index];
                         final priceText = course['price'] == 0
                             ? 'Gratis'
@@ -380,14 +399,18 @@ class HomeState extends State<Home> {
                                               horizontal: 6.0,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: Colors.black.withOpacity(
-                                                0.3,
-                                              ),
+                                              color: isOwned
+                                                  ? Colors.green.withOpacity(
+                                                      0.7,
+                                                    )
+                                                  : Colors.black.withOpacity(
+                                                      0.3,
+                                                    ),
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                             ),
                                             child: Text(
-                                              priceText,
+                                              isOwned ? 'Dimiliki' : priceText,
                                               style: TextStyle(
                                                 color: Colors.white,
                                               ),
