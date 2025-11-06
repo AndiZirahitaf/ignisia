@@ -1,4 +1,4 @@
-package com.example.elearning
+package com.ignisia.app
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

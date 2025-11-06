@@ -1,9 +1,8 @@
-import 'package:elearning/register.dart';
+import 'package:elearning/app_theme.dart';
+import 'package:elearning/auth/register.dart';
 import 'package:elearning/root_bottom_nav.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'api/api.dart'; // pastikan path sesuai project kamu
-import 'package:elearning/home.dart'; // halaman tujuan setelah login
+import '../api/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,9 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _obscurePassword = true;
-
   bool _isLoading = false;
-  // String? _errorMessage;
 
   Future<void> _handleLogin() async {
     setState(() {
@@ -116,22 +113,20 @@ class _LoginPageState extends State<LoginPage> {
         padding: const EdgeInsets.all(30),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          // crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 230),
             Center(
               child: Text(
                 "Ignisia",
                 style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFF38273),
-                  fontFamily: 'Trocchi',
+                  fontSize: 40,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.black,
+                  fontFamily: 'Playfair Display',
                 ),
               ),
             ),
             SizedBox(height: 70),
-
             Text(
               "Login ke Akun Kamu",
               style: TextStyle(
@@ -187,26 +182,24 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 20),
 
-            // tombol login
             _isLoading
-                ? const CircularProgressIndicator()
+                ? Center(child: const CircularProgressIndicator())
                 : ElevatedButton(
                     onPressed: _handleLogin,
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      // backgroundColor: const Color(0xFF470800),
-                      backgroundColor: const Color(0xFFF38273),
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(50),
                       ),
                     ),
-                    child: const Text("Login!"),
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
 
-            // const SizedBox(height: 70),
-            Expanded(child: Container()),
-
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.only(bottom: 24),
               child: Center(
@@ -226,7 +219,13 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         );
                       },
-                      child: const Text("Daftar yuk!"),
+                      child: const Text(
+                        "Daftar yuk!",
+                        style: TextStyle(
+                          color: AppColors.secondary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ],
                 ),

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "119096568187",
+    "project_id": "ignisia-ddf7d",
+    "storage_bucket": "ignisia-ddf7d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:119096568187:android:8b0d592956fe664948b5de",
+        "android_client_info": {
+          "package_name": "com.ignisia.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzXaQZth2ZM-e8EwdYr7vLg16luqM1u0E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

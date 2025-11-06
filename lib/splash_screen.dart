@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:elearning/login.dart';
+import 'package:elearning/auth/login.dart';
 import 'package:elearning/root_bottom_nav.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -39,15 +39,19 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: const Color.fromARGB(255, 237, 225, 200),
+        // color: const Color.fromARGB(255, 237, 225, 200),
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          child: Stack(
             children: [
-              Image.asset(
-                'lib/assets/logo_splash.png',
-                width: 250,
-                height: 250,
+              // Image.asset('lib/assets/ignisia.png'),
+              Text(
+                'Ignisia',
+                style: TextStyle(
+                  fontSize: 50,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black,
+                  fontFamily: 'Playfair Display',
+                ),
               ),
             ],
           ),

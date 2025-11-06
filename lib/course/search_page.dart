@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'api/api.dart';
+import '../api/api.dart';
 import 'course_detail.dart';
 
 class SearchPage extends StatefulWidget {

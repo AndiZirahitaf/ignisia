@@ -1,8 +1,10 @@
+import 'package:elearning/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:elearning/home.dart';
-import 'package:elearning/mycourses.dart';
+import 'package:elearning/course/mycourses.dart';
 import 'package:elearning/profile.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RootWithBottomNav extends StatefulWidget {
   final int? initialIndex;
@@ -36,6 +38,7 @@ class _RootWithBottomNavState extends State<RootWithBottomNav> {
     return Scaffold(
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: AppColors.dark,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         selectedLabelStyle: const TextStyle(
@@ -48,10 +51,11 @@ class _RootWithBottomNavState extends State<RootWithBottomNav> {
           fontWeight: FontWeight.w400,
           fontSize: 12,
         ),
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.home),
+            icon: Icon(CupertinoIcons.house_alt),
             label: 'Home',
+            activeIcon: Icon(CupertinoIcons.house_alt_fill),
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.book),

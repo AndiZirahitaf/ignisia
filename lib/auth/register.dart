@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'api/api.dart';
+import '../api/api.dart';
 import 'login.dart';
-import 'root_bottom_nav.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -100,21 +98,19 @@ class _RegisterPageState extends State<RegisterPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 150),
             Center(
               child: Text(
                 "Ignisia",
                 style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFFF38273),
-                  fontFamily: 'Trocchi',
+                  fontSize: 40,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black,
+                  fontFamily: 'Playfair Display',
                 ),
               ),
             ),
-            const SizedBox(height: 70),
-
-            const Text(
+            SizedBox(height: 70),
+            Text(
               "Buat Akun Baru",
               style: TextStyle(
                 fontSize: 20,
@@ -174,17 +170,15 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
             const SizedBox(height: 20),
-
             _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : ElevatedButton(
                     onPressed: _handleRegister,
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      backgroundColor: const Color(0xFFF38273),
                       minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(50),
                       ),
                     ),
                     child: const Text("Daftar Sekarang"),
@@ -198,7 +192,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 textAlign: TextAlign.center,
               ),
             const SizedBox(height: 30),
-            Expanded(child: Container()),
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Center(
@@ -216,7 +209,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           MaterialPageRoute(builder: (_) => const LoginPage()),
                         );
                       },
-                      child: const Text("Login yuk!"),
+                      child: const Text(
+                        "Login yuk!",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
                 ),

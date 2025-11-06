@@ -1,7 +1,9 @@
+// api.dart
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+// import 'package:firebase_messaging/firebase_messaging.dart';
 
 String ApiUrl = 'http://10.0.2.2:3000/api/';
 
@@ -63,10 +65,9 @@ Future<List<dynamic>> getOwnedCourses(int userId) async {
 String GET_A_LESSON(int lessonId) => '${ApiUrl}lessons/$lessonId';
 String GET_LESSONS(int courseId, int userId) =>
     '${ApiUrl}lessons/course/$courseId/user/$userId';
-String COMPLETE_LESSON(String lessonId) =>
-    '${ApiUrl}lessons/$lessonId/complete';
+String COMPLETE_LESSON(int lessonId) => '${ApiUrl}lessons/$lessonId/complete';
 
-// GET lessons by course and user (locked/unlocked)
+// GET a lesson
 Future<Map<String, dynamic>?> getALesson(int lessonID) async {
   final response = await http.get(Uri.parse(GET_A_LESSON(lessonID)));
 
@@ -88,8 +89,9 @@ Future<List<dynamic>> getLessons(int courseId, int userId) async {
   }
 }
 
-// POST mark lesson completed
-Future<bool> completeLesson(String lessonId, int userId) async {
+// POST mark lesson completed (now includes courseId)
+
+Future<List<int>> completeLesson(int lessonId, int userId) async {
   final response = await http.post(
     Uri.parse(COMPLETE_LESSON(lessonId)),
     headers: {"Content-Type": "application/json"},
@@ -97,9 +99,10 @@ Future<bool> completeLesson(String lessonId, int userId) async {
   );
 
   if (response.statusCode == 200) {
-    return true;
+    final data = jsonDecode(response.body);
+    return List<int>.from(data["completedLessons"]); // hasilnya list lesson_id
   } else {
-    return false;
+    throw Exception("Gagal update progress: ${response.body}");
   }
 }
 
@@ -107,6 +110,7 @@ Future<bool> completeLesson(String lessonId, int userId) async {
 String REGISTER_USER = '${ApiUrl}users/register';
 String LOGIN_USER = '${ApiUrl}users/login';
 String GET_USER(int id) => '${ApiUrl}users/$id';
+String UPDATE_USER(int id) => '${ApiUrl}users/$id';
 
 // POST register
 Future<Map<String, dynamic>> registerUser(
@@ -156,6 +160,34 @@ Future<Map<String, dynamic>> getUser(int userId) async {
     return jsonDecode(response.body);
   } else {
     throw Exception('Failed to get user profile');
+  }
+}
+
+Future<Map<String, dynamic>> updateUser(
+  int id, {
+  String? name,
+  String? email,
+  String? password,
+  String? photoUrl,
+}) async {
+  final response = await http.put(
+    Uri.parse(UPDATE_USER(id)),
+    headers: {"Content-Type": "application/json"},
+    body: jsonEncode({
+      "name": name,
+      "email": email,
+      "password": password,
+      "photo_url": photoUrl,
+    }),
+  );
+
+  print("STATUS UPDATE: ${response.statusCode}");
+  print("BODY UPDATE: ${response.body}");
+
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body);
+  } else {
+    throw Exception('Failed to update user');
   }
 }
 
@@ -219,3 +251,46 @@ Future<List<dynamic>> getCategories() async {
     throw Exception('Failed to load categories');
   }
 }
+
+// // ==================== FIREBASE MESSAGING (Flutter side) ====================
+
+// // Ambil device token FCM
+// Future<String?> getDeviceToken() async {
+//   FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+//   NotificationSettings settings = await messaging.requestPermission(
+//     alert: true,
+//     badge: true,
+//     sound: true,
+//   );
+
+//   if (settings.authorizationStatus == AuthorizationStatus.denied) {
+//     print("User menolak push notification");
+//     return null;
+//   }
+
+//   String? token = await messaging.getToken();
+//   print("Device Token: $token");
+//   return token;
+// }
+
+// // Kirim device token ke backend
+// Future<void> registerDeviceToken(int userId, String token) async {
+//   await http.post(
+//     Uri.parse("http://YOUR_SERVER_ADDRESS/register-token"),
+//     body: {"user_id": userId.toString(), "token": token},
+//   );
+// }
+
+// // Listener untuk menerima notif saat app foreground
+// void setupFCMListener() {
+//   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+//     print("Terima notifikasi (onMessage): ${message.notification?.title}");
+//     print("Body: ${message.notification?.body}");
+//     // Tampilkan SnackBar, dialog, atau update UI via state management
+//   });
+
+//   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+//     print("User buka app dari notif: ${message.notification?.title}");
+//   });
+// }

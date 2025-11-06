@@ -1,8 +1,8 @@
 import 'package:elearning/root_bottom_nav.dart';
 import 'package:flutter/material.dart';
-import 'package:elearning/mycourses.dart';
+import 'package:elearning/course/mycourses.dart';
 import 'package:intl/intl.dart'; // buat format angka ribuan
-import 'api/api.dart';
+import '../api/api.dart';
 
 class CheckoutPage extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -154,7 +154,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
             const SizedBox(height: 20),
 
             DropdownButtonFormField<String>(
+              // isDense: true,
+              dropdownColor: Colors.white,
               value: selectedCurrency,
+              isExpanded: false,
               decoration: _inputDecoration("Pilih Mata Uang"),
               items: const [
                 DropdownMenuItem(value: "IDR", child: Text("Rupiah (IDR)")),
@@ -171,6 +174,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             const SizedBox(height: 20),
 
             DropdownButtonFormField<String>(
+              dropdownColor: Colors.white,
               value: selectedMethod,
               decoration: _inputDecoration("Metode Pembayaran"),
               items: const [
@@ -220,6 +224,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       filled: true,
       fillColor: Colors.white,
       contentPadding: const EdgeInsets.symmetric(vertical: 17, horizontal: 12),
+      isDense: true,
     );
   }
 }

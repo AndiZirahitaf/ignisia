@@ -1,17 +1,18 @@
-import 'package:elearning/course_detail.dart';
-import 'package:elearning/search_page.dart';
-import 'package:elearning/seminar_detail.dart';
+import 'package:elearning/app_theme.dart';
+import 'package:elearning/course/course_detail.dart';
+import 'package:elearning/course/search_page.dart';
+import 'package:elearning/seminar/seminar_detail.dart';
+import 'package:elearning/workshop/workshop_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'data.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 import 'api/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -21,6 +22,7 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
+  final MapController _mapController = MapController();
   LatLng? _userPosition;
   String name = '';
   bool isLoading = true;
@@ -29,9 +31,9 @@ class HomeState extends State<Home> {
   bool isLoadingCourses = true;
   bool isLoadingWorkshops = true;
   bool isLoadingSeminars = true;
-  Workshop? _nearestWorkshop;
   List<dynamic> courses = [];
   List<dynamic> seminars = [];
+  List<dynamic> workshops = [];
 
   @override
   void initState() {
@@ -39,7 +41,20 @@ class HomeState extends State<Home> {
     loadUserData();
     _loadCourses();
     _loadSeminars();
+    loadWorkshops();
     _getCurrentLocation();
+  }
+
+  Future<void> loadWorkshops() async {
+    try {
+      final data = await getWorkshops();
+      setState(() {
+        workshops = data;
+        isLoadingWorkshops = false;
+      });
+    } catch (e) {
+      setState(() => isLoadingWorkshops = false);
+    }
   }
 
   Future<void> loadUserData() async {
@@ -80,38 +95,6 @@ class HomeState extends State<Home> {
     }
   }
 
-  void _findNearestWorkshop() {
-    if (_userPosition == null) return;
-
-    final distance = const Distance();
-    Workshop? nearest;
-    double shortest = double.infinity;
-
-    for (var w in workshops) {
-      double d = distance.as(
-        LengthUnit.Kilometer,
-        _userPosition!,
-        LatLng(w.lat, w.lng),
-      );
-      if (d < shortest) {
-        shortest = d;
-        nearest = w;
-      }
-    }
-
-    setState(() {
-      _nearestWorkshop = nearest;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Workshop terdekat: ${nearest?.title ?? "Tidak ditemukan"} (${shortest.toStringAsFixed(1)} km)',
-        ),
-      ),
-    );
-  }
-
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -148,16 +131,23 @@ class HomeState extends State<Home> {
     });
   }
 
-  String _formatDateTime(String rawDateTime) {
-    final dateTime = DateTime.parse(rawDateTime);
-    final formatter = DateFormat('EEEE dd MMMM yyyy, HH:mm', 'id_ID');
-    return '${formatter.format(dateTime)} WIB';
+  String _formatDate(dynamic datetime) {
+    final dateTime = DateTime.parse(datetime);
+    final formatter = DateFormat('dd MMM yyyy', 'id_ID');
+    return formatter.format(dateTime);
+  }
+
+  String _formatTime(dynamic datetime) {
+    final dateTime = DateTime.parse(datetime);
+    final formatter = DateFormat('HH:mm', 'id_ID');
+    final end = "${formatter.format(dateTime)} WIB";
+    return end;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: const Color.fromARGB(255, 246, 241, 232),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
@@ -169,23 +159,23 @@ class HomeState extends State<Home> {
         ),
         backgroundColor: Color.fromARGB(255, 255, 254, 252),
         foregroundColor: Colors.black,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: GestureDetector(
-              onTap: () {
-                // TODO: handle avatar tap (navigate to profile, open menu, etc.)
-              },
-              child: CircleAvatar(
-                radius: 25,
-                // Use backgroundImage: NetworkImage('...') to show a photo instead of an initial
-                backgroundImage: Image.asset('assets/images/profile.png').image,
-                backgroundColor: const Color(0xFFFFBFB6),
-                // child: Image.asset('assets/images/profile.png'),
-              ),
-            ),
-          ),
-        ],
+        // actions: [
+        //   Padding(
+        //     padding: const EdgeInsets.only(right: 20.0),
+        //     child: GestureDetector(
+        //       onTap: () {
+        //         // TODO: handle avatar tap (navigate to profile, open menu, etc.)
+        //       },
+        //       child: CircleAvatar(
+        //         radius: 25,
+        //         // Use backgroundImage: NetworkImage('...') to show a photo instead of an initial
+        //         backgroundImage: Image.asset('assets/images/profile.png').image,
+        //         backgroundColor: const Color(0xFFFFBFB6),
+        //         // child: Image.asset('assets/images/profile.png'),
+        //       ),
+        //     ),
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -224,7 +214,7 @@ class HomeState extends State<Home> {
                           style: TextStyle(
                             fontSize: 27,
                             fontWeight: FontWeight.w900,
-                            fontFamily: 'Playfair Display',
+                            fontFamily: 'Outfit',
                             color: Colors.black87,
                           ),
                         ),
@@ -238,7 +228,7 @@ class HomeState extends State<Home> {
               margin: const EdgeInsets.only(top: 20),
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.gray,
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
                   color: Color.fromARGB(255, 208, 208, 208),
@@ -248,7 +238,7 @@ class HomeState extends State<Home> {
               child: TextField(
                 decoration: InputDecoration(
                   icon: Icon(Icons.search, color: Colors.grey[600]),
-                  hintText: 'Cari mata pelajaran atau topik...',
+                  hintText: 'Cari mata pelajaran...',
                   hintStyle: TextStyle(color: Colors.grey[500]),
                   border: InputBorder.none,
                 ),
@@ -267,8 +257,8 @@ class HomeState extends State<Home> {
               'Kursus Untuk Anda',
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.w900,
-                fontFamily: 'Trocchi',
+                fontWeight: FontWeight.bold,
+                // fontFamily: 'Trocchi',
               ),
             ),
             SizedBox(height: 10),
@@ -417,13 +407,27 @@ class HomeState extends State<Home> {
             ),
 
             SizedBox(height: 30),
-            Text(
-              'Event Workshop di Sekitar',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Outfit',
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Event Workshop di Sekitar',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    // fontFamily: 'Trocchi',
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const WorkshopPage()),
+                    );
+                  },
+                  child: Text("More"),
+                ),
+              ],
             ),
             SizedBox(height: 10),
             Container(
@@ -434,134 +438,168 @@ class HomeState extends State<Home> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: FlutterMap(
-                  options: MapOptions(
-                    initialCenter: LatLng(
-                      -2.5489,
-                      118.0149,
-                    ), // Tengah Indonesia
-                    initialZoom: 1.5,
-                  ),
+                child: Stack(
                   children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'com.ignisia.app',
-                    ),
-                    if (_userPosition != null)
-                      MarkerLayer(
-                        markers: [
-                          Marker(
-                            point: _userPosition!,
-                            width: 80,
-                            height: 80,
-                            child: const Icon(
-                              Icons.my_location,
-                              color: Colors.blue,
-                              size: 36,
-                            ),
-                          ),
-                        ],
+                    FlutterMap(
+                      mapController: _mapController,
+                      options: MapOptions(
+                        initialCenter: LatLng(
+                          -2.5489,
+                          118.0149,
+                        ), // Tengah Indonesia
+                        initialZoom: 1.5,
                       ),
-                    MarkerLayer(
-                      markers: [
-                        // Lokasi user (jika tersedia)
+                      children: [
+                        TileLayer(
+                          urlTemplate:
+                              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          userAgentPackageName: 'com.ignisia.app',
+                        ),
+                        if (_userPosition != null)
+                          MarkerLayer(
+                            markers: [
+                              Marker(
+                                point: _userPosition!,
+                                width: 80,
+                                height: 80,
+                                child: const Icon(
+                                  Icons.my_location,
+                                  color: Colors.blue,
+                                  size: 36,
+                                ),
+                              ),
+                            ],
+                          ),
+                        MarkerLayer(
+                          markers: [
+                            // Lokasi user (jika tersedia)
 
-                        // Marker workshop dari data.dart
-                        ...workshops.map(
-                          (w) => Marker(
-                            point: LatLng(w.lat, w.lng),
-                            width: 80,
-                            height: 80,
-                            child: GestureDetector(
-                              onTap: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(20),
-                                    ),
-                                  ),
-                                  builder: (context) => Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          w.title,
-                                          style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                            // Marker workshop dari data.dart
+                            ...workshops.map(
+                              (w) => Marker(
+                                point: LatLng(w['latitude'], w['longitude']),
+                                width: 80,
+                                height: 80,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(20),
                                         ),
-                                        const SizedBox(height: 8),
-                                        Row(
+                                      ),
+                                      builder: (context) => Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            const Icon(
-                                              Icons.location_on,
-                                              color: Colors.red,
+                                            Text(
+                                              w['title'],
+                                              style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                            const SizedBox(width: 6),
-                                            Text(w.location),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.date_range,
-                                              color: Colors.grey,
-                                            ),
-                                            const SizedBox(width: 6),
-                                            Text(w.date),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 20),
-                                        ElevatedButton.icon(
-                                          onPressed: () async {
-                                            final Uri uri = Uri.parse(
-                                              'https://www.google.com/maps/search/?api=1&query=${w.lat},${w.lng}',
-                                            );
-
-                                            if (await canLaunchUrl(uri)) {
-                                              await launchUrl(
-                                                uri,
-                                                mode: LaunchMode
-                                                    .externalApplication,
-                                              );
-                                            } else {
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                    'Tidak bisa membuka Maps',
-                                                  ),
+                                            const SizedBox(height: 8),
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.location_on,
+                                                  color: Colors.red,
                                                 ),
-                                              );
-                                            }
-                                          },
-                                          icon: const Icon(Icons.directions),
-                                          label: const Text(
-                                            'Arahkan ke Lokasi',
-                                          ),
+                                                const SizedBox(width: 6),
+                                                Text(w['address']),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.date_range,
+                                                  color: Colors.grey,
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Text(w['date']),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 20),
+                                            ElevatedButton.icon(
+                                              onPressed: () async {
+                                                final Uri uri = Uri.parse(
+                                                  'https://www.google.com/maps/dir/?api=1&destination=${w['latitude']},${w['longitude']}&travelmode=driving',
+                                                );
+
+                                                if (await canLaunchUrl(uri)) {
+                                                  await launchUrl(
+                                                    uri,
+                                                    mode: LaunchMode
+                                                        .externalApplication,
+                                                  );
+                                                } else {
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                        'Tidak bisa membuka Maps',
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                              icon: const Icon(
+                                                Icons.directions,
+                                              ),
+                                              label: const Text(
+                                                'Arahkan ke Lokasi',
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    );
+                                  },
+                                  child: const Icon(
+                                    Icons.location_on,
+                                    color: Colors.red,
+                                    size: 36,
                                   ),
-                                );
-                              },
-                              child: const Icon(
-                                Icons.location_on,
-                                color: Colors.red,
-                                size: 36,
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ],
+                    ),
+                    Positioned(
+                      bottom: 16,
+                      right: 16,
+                      child: FloatingActionButton(
+                        mini: true,
+                        backgroundColor: Colors.white,
+                        elevation: 4,
+                        onPressed: () {
+                          if (_userPosition != null) {
+                            _mapController.move(
+                              _userPosition!,
+                              4,
+                            ); // Zoom ke dekat user
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Lokasi tidak ditemukan"),
+                              ),
+                            );
+                          }
+                        },
+                        child: const Icon(
+                          Icons.my_location,
+                          color: Colors.blue,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -571,9 +609,9 @@ class HomeState extends State<Home> {
             Text(
               'Info Webinar',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'Outfit',
+                // fontFamily: 'Trocchi',
               ),
             ),
 
@@ -590,11 +628,16 @@ class HomeState extends State<Home> {
                       return Container(
                         margin: const EdgeInsets.only(bottom: 12),
                         child: Material(
-                          color: Colors.white,
-                          elevation: 1,
-                          borderRadius: BorderRadius.circular(12),
+                          color: const Color.fromARGB(255, 255, 249, 241),
+                          // shape: RoundedRectangleBorder(
+                          //   // borderRadius: BorderRadius.circular(15),
+                          //   side: BorderSide(
+                          //     color: Colors.grey.shade300,
+                          //     width: 1,
+                          //   ),
+                          // ),
                           child: InkWell(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(15),
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -611,11 +654,8 @@ class HomeState extends State<Home> {
                                 vertical: 10,
                               ),
                               child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  const Icon(
-                                    Icons.event,
-                                    color: Colors.deepOrange,
-                                  ),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
@@ -624,21 +664,82 @@ class HomeState extends State<Home> {
                                       children: [
                                         Text(
                                           seminar['title'],
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 16,
-                                            fontWeight: FontWeight.w600,
+                                            fontWeight: FontWeight.w300,
                                           ),
                                         ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          _formatDateTime(seminar['datetime']),
-                                          style: TextStyle(
-                                            color: Colors.grey[600],
-                                          ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          spacing: 50,
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 5,
+                                                vertical: 3,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                color: const Color.fromARGB(
+                                                  255,
+                                                  255,
+                                                  220,
+                                                  210,
+                                                ),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.calendar_today,
+                                                    size: 16,
+                                                    color: AppColors.primary,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    _formatDate(
+                                                      seminar['datetime'],
+                                                    ),
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: AppColors.primary,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.access_time,
+                                                  size: 16,
+                                                  color: Colors.black54,
+                                                ),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  // Gunakan fungsi untuk memformat HANYA tanggal
+                                                  _formatTime(
+                                                    seminar['datetime'],
+                                                  ),
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.black54,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
                                   ),
+
+                                  // 3. Icon Chevron (Trailing)
                                   const Icon(
                                     Icons.chevron_right,
                                     color: Colors.grey,

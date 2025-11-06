@@ -1,8 +1,6 @@
+import 'package:elearning/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:elearning/splash_screen.dart';
-import 'package:elearning/mycourses.dart';
-import 'package:elearning/profile.dart';
-import 'package:elearning/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -20,31 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Ignisia',
-      theme: ThemeData(
-        fontFamily: 'Outfit',
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF470800), // your base color (brown example)
-          brightness: Brightness.light,
-        ),
-        scaffoldBackgroundColor: const Color(0xFFF5F3EF), // page background
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFFF38273),
-          foregroundColor: Colors.white,
-          elevation: 2,
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFF38273),
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(12)),
-            ),
-          ),
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(foregroundColor: const Color(0xFF8B4513)),
-        ),
-      ),
+      theme: AppTheme.lightTheme,
       home: const SplashScreen(),
     );
   }
