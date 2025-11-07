@@ -508,7 +508,19 @@ class CourseDetailPageState extends State<CourseDetailPage> {
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color: isLessonUnlocked
-                                        ? const Color.fromARGB(255, 59, 97, 221)
+                                        ? (lesson['completed'] == true
+                                              ? const Color.fromARGB(
+                                                  255,
+                                                  25,
+                                                  143,
+                                                  38,
+                                                )
+                                              : const Color.fromARGB(
+                                                  255,
+                                                  59,
+                                                  97,
+                                                  221,
+                                                ))
                                         : Colors.grey.shade400,
                                     width: 5,
                                   ),

@@ -133,7 +133,8 @@ Future<Map<String, dynamic>> registerUser(
   if (response.statusCode == 200) {
     return jsonDecode(response.body);
   } else {
-    throw Exception('Failed to register user');
+    final error = jsonDecode(response.body);
+    throw Exception(error['message'] ?? 'Failed to register user');
   }
 }
 

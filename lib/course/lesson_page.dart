@@ -125,6 +125,28 @@ class _LessonPageState extends State<LessonPage> {
     }
   }
 
+  void _navigateToLesson(lesson, int index) async {
+    // 1. Panggil push dan TUNGGU hasilnya (sampai LessonPage di-pop)
+    final bool? lessonUpdated = await Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LessonPage(
+          courseName: widget.courseName,
+          lessons: widget.lessons,
+          lessonIndex: index,
+          userId: widget.userId,
+          courseId: widget.courseId, // Tambahkan courseId untuk keamanan
+        ),
+      ),
+    );
+
+    // 2. Jika LessonPage mengembalikan nilai 'true', panggil ulang
+    //    loadUserDataAndCourse() untuk me-refresh list lesson.
+    if (lessonUpdated == true) {
+      print("Lesson Page Selesai, Memuat ulang status lesson...");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -245,21 +267,25 @@ class _LessonPageState extends State<LessonPage> {
                       ? () {
                           // final target = widget.lessons[widget.lessonIndex - 1];
 
-                          Navigator.pushReplacement(
-                            context,
+                          // Navigator.pushReplacement(
+                          //   context,
 
-                            MaterialPageRoute(
-                              builder: (context) => LessonPage(
-                                lessonIndex: widget.lessonIndex - 1,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => LessonPage(
+                          //       lessonIndex: widget.lessonIndex - 1,
 
-                                lessons: widget.lessons,
+                          //       lessons: widget.lessons,
 
-                                courseName: widget.courseName,
+                          //       courseName: widget.courseName,
 
-                                userId: widget.userId,
-                                courseId: widget.courseId,
-                              ),
-                            ),
+                          //       userId: widget.userId,
+                          //       courseId: widget.courseId,
+                          //     ),
+                          //   ),
+                          // );
+                          _navigateToLesson(
+                            widget.lessons[widget.lessonIndex - 1],
+                            widget.lessonIndex - 1,
                           );
                         }
                       : null,
@@ -304,21 +330,25 @@ class _LessonPageState extends State<LessonPage> {
                       ? () {
                           // final target = widget.lessons[widget.lessonIndex + 1];
 
-                          Navigator.pushReplacement(
-                            context,
+                          // Navigator.pushReplacement(
+                          //   context,
 
-                            MaterialPageRoute(
-                              builder: (context) => LessonPage(
-                                lessonIndex: widget.lessonIndex + 1,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => LessonPage(
+                          //       lessonIndex: widget.lessonIndex + 1,
 
-                                lessons: widget.lessons,
+                          //       lessons: widget.lessons,
 
-                                courseName: widget.courseName,
+                          //       courseName: widget.courseName,
 
-                                userId: widget.userId,
-                                courseId: widget.courseId,
-                              ),
-                            ),
+                          //       userId: widget.userId,
+                          //       courseId: widget.courseId,
+                          //     ),
+                          //   ),
+                          // );
+                          _navigateToLesson(
+                            widget.lessons[widget.lessonIndex + 1],
+                            widget.lessonIndex + 1,
                           );
                         }
                       : null,
