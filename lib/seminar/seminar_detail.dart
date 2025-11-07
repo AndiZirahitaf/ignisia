@@ -60,18 +60,18 @@ class _SeminarDetailPageState extends State<SeminarDetailPage> {
     return "${formatter.format(localized)} $zone";
   }
 
-  void _toggleFavorite() {
-    setState(() => _isFavorite = !_isFavorite);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          _isFavorite ? 'Ditambahkan ke favorit' : 'Dihapus dari favorit',
-        ),
-        duration: const Duration(milliseconds: 800),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
+  // void _toggleFavorite() {
+  //   setState(() => _isFavorite = !_isFavorite);
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Text(
+  //         _isFavorite ? 'Ditambahkan ke favorit' : 'Dihapus dari favorit',
+  //       ),
+  //       duration: const Duration(milliseconds: 800),
+  //       behavior: SnackBarBehavior.floating,
+  //     ),
+  //   );
+  // }
 
   void _register() {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -96,18 +96,21 @@ class _SeminarDetailPageState extends State<SeminarDetailPage> {
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
         title: const Text(
-          "Detail Seminar",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              _isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: _isFavorite ? Colors.red : Colors.black54,
-            ),
-            onPressed: _toggleFavorite,
+          "Detail Webinar",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Playfair Display',
           ),
-        ],
+        ),
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(
+        //       _isFavorite ? Icons.favorite : Icons.favorite_border,
+        //       color: _isFavorite ? Colors.red : Colors.black54,
+        //     ),
+        //     onPressed: _toggleFavorite,
+        //   ),
+        // ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 100.0),

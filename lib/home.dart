@@ -138,9 +138,25 @@ class HomeState extends State<Home> {
       return;
     }
 
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+    Position position;
+    try {
+      position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+    } catch (e) {
+      position = Position(
+        latitude: -7.7828,
+        longitude: 110.3743,
+        timestamp: DateTime.now(),
+        accuracy: 1.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+        altitudeAccuracy: 0.0,
+        headingAccuracy: 0.0,
+      );
+    }
 
     setState(() {
       _userPosition = LatLng(position.latitude, position.longitude);
@@ -254,7 +270,7 @@ class HomeState extends State<Home> {
               child: TextField(
                 decoration: InputDecoration(
                   icon: Icon(Icons.search, color: Colors.grey[600]),
-                  hintText: 'Cari mata pelajaran...',
+                  hintText: 'Apa yang ingin Anda pelajari...',
                   hintStyle: TextStyle(color: Colors.grey[500]),
                   border: InputBorder.none,
                 ),
@@ -467,10 +483,10 @@ class HomeState extends State<Home> {
                       mapController: _mapController,
                       options: MapOptions(
                         initialCenter: LatLng(
-                          -2.5489,
-                          118.0149,
+                          -7.7828,
+                          110.3743,
                         ), // Tengah Indonesia
-                        initialZoom: 1.5,
+                        initialZoom: 3,
                       ),
                       children: [
                         TileLayer(
@@ -562,14 +578,13 @@ class HomeState extends State<Home> {
                                                         .externalApplication,
                                                   );
                                                 } else {
-                                                  ScaffoldMessenger.of(
-                                                    context,
-                                                  ).showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                        'Tidak bisa membuka Maps',
-                                                      ),
-                                                    ),
+                                                  final fallbackUri = Uri.parse(
+                                                    'https://www.google.com/maps/search/?api=1&query=${w['latitude']},${w['longitude']}',
+                                                  );
+                                                  await launchUrl(
+                                                    fallbackUri,
+                                                    mode: LaunchMode
+                                                        .platformDefault,
                                                   );
                                                 }
                                               },
@@ -608,7 +623,7 @@ class HomeState extends State<Home> {
                           if (_userPosition != null) {
                             _mapController.move(
                               _userPosition!,
-                              4,
+                              7,
                             ); // Zoom ke dekat user
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(

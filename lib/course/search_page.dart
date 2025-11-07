@@ -346,14 +346,18 @@ class _SearchPageState extends State<SearchPage> {
                                               horizontal: 6.0,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: Colors.black.withOpacity(
-                                                0.3,
-                                              ),
+                                              color: isOwned
+                                                  ? Colors.green.withOpacity(
+                                                      0.7,
+                                                    )
+                                                  : Colors.black.withOpacity(
+                                                      0.3,
+                                                    ),
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                             ),
                                             child: Text(
-                                              priceText,
+                                              isOwned ? 'Dimiliki' : priceText,
                                               style: TextStyle(
                                                 color: Colors.white,
                                               ),

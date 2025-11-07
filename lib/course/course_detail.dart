@@ -1,6 +1,8 @@
+import 'package:elearning/app_theme.dart';
 import 'package:elearning/certificate_page.dart';
 import 'package:elearning/course/checkout_page.dart';
 import 'package:elearning/course/lesson_page.dart';
+import 'package:elearning/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -106,6 +108,20 @@ class CourseDetailPageState extends State<CourseDetailPage> {
     });
   }
 
+  void _checkAndNotifyCourseCompleted() async {
+    final totalLessons = lessons.length;
+    final completedLessons = lessons
+        .where((l) => l['completed'] == true)
+        .length;
+
+    if (completedLessons == totalLessons && totalLessons > 0) {
+      await NotificationService.instance.showCourseCompletedNotification(
+        course['title'],
+        course['id'],
+      );
+    }
+  }
+
   // Fungsi Navigasi yang Dimodifikasi
   void _navigateToLesson(lesson, int index) async {
     // 1. Panggil push dan TUNGGU hasilnya (sampai LessonPage di-pop)
@@ -127,6 +143,7 @@ class CourseDetailPageState extends State<CourseDetailPage> {
       print("Lesson Page Selesai, Memuat ulang status lesson...");
       setState(() => isLoadingCourse = true); // Tampilkan loading sebentar
       await loadUserDataAndCourse();
+      _checkAndNotifyCourseCompleted();
     }
   }
 
@@ -175,6 +192,7 @@ class CourseDetailPageState extends State<CourseDetailPage> {
         // Ini akan diterima oleh MyCourses yang memanggil push.
         Navigator.of(context).pop(true);
         // Mengembalikan 'false' untuk mencegah Navigator pop lagi secara otomatis.
+
         return false;
       },
       child: Scaffold(
@@ -207,6 +225,7 @@ class CourseDetailPageState extends State<CourseDetailPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+
                 background: Hero(
                   tag: 'course-hero-${course['id']}',
                   child: Container(
@@ -262,6 +281,30 @@ class CourseDetailPageState extends State<CourseDetailPage> {
                                 color: Colors.grey[700],
                               ),
                             ),
+                            const SizedBox(width: 15),
+                            isOwned
+                                ? Icon(
+                                    completedLessons >= totalLessons &&
+                                            totalLessons > 0
+                                        ? Icons.done
+                                        : Icons.hourglass_bottom,
+                                    color: Colors.grey[600],
+                                    size: 20,
+                                  )
+                                : Container(),
+                            SizedBox(width: 4),
+                            isOwned
+                                ? Text(
+                                    completedLessons >= totalLessons &&
+                                            totalLessons > 0
+                                        ? 'Completed'
+                                        : 'Ongoing',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[700],
+                                    ),
+                                  )
+                                : Container(),
                           ],
                         ),
 
@@ -431,32 +474,9 @@ class CourseDetailPageState extends State<CourseDetailPage> {
                           ),
                           child: Material(
                             color: const Color.fromARGB(31, 153, 153, 153),
-                            // shape: RoundedRectangleBorder(
-                            //   side: BorderSide(color: Colors.black26, width: 1),
-                            //   borderRadius: BorderRadius.horizontal(
-                            //     left: Radius.circular(0),
-                            //     right: Radius.circular(50),
-                            //   ),
-                            // ),
+
+                            // color: AppColors.secondary,
                             child: ListTile(
-                              enabled: isLessonUnlocked,
-                              leading: CircleAvatar(
-                                backgroundColor: isLessonUnlocked
-                                    ? Colors.blueAccent
-                                    : Colors.grey.shade400,
-                                child: Text(
-                                  '${index + 1}',
-                                  style: isLessonUnlocked
-                                      ? TextStyle(
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.bold,
-                                        )
-                                      : TextStyle(
-                                          color: Colors.grey[500],
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                ),
-                              ),
                               title: Text(
                                 lesson['title'],
                                 style: TextStyle(fontWeight: FontWeight.w500),
@@ -480,6 +500,37 @@ class CourseDetailPageState extends State<CourseDetailPage> {
                                       _navigateToLesson(lesson, index);
                                     }
                                   : null,
+                              enabled: isLessonUnlocked,
+                              leading: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: isLessonUnlocked
+                                        ? const Color.fromARGB(255, 59, 97, 221)
+                                        : Colors.grey.shade400,
+                                    width: 5,
+                                  ),
+                                ),
+                                child: CircleAvatar(
+                                  backgroundColor: isLessonUnlocked
+                                      ? Colors.grey.shade200
+                                      : Colors.grey.shade400,
+                                  child: Text(
+                                    '${index + 1}',
+                                    style: isLessonUnlocked
+                                        ? TextStyle(
+                                            color: Colors.black87,
+                                            fontWeight: FontWeight.bold,
+                                          )
+                                        : TextStyle(
+                                            color: Colors.grey[500],
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         );

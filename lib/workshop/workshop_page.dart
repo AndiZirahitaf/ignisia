@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../api/api.dart'; // <-- pastikan path sesuai
@@ -80,19 +81,30 @@ class _WorkshopPageState extends State<WorkshopPage> {
     }
   }
 
+  String _formatDate(dynamic datetime) {
+    final dateTime = DateTime.parse(datetime);
+    final formatter = DateFormat('dd MMM yyyy', 'id_ID');
+    return formatter.format(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        title: const Text("Workshop di Sekitar"),
+        title: const Text(
+          "Workshop di Sekitar",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Playfair Display',
+          ),
+        ),
       ),
       body: loading
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // ================= MAP =================
                 Expanded(
                   flex: 2,
                   child: Stack(
@@ -232,50 +244,55 @@ class _WorkshopPageState extends State<WorkshopPage> {
                             ),
                             const SizedBox(height: 4),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(
-                                      Icons.location_pin,
-                                      size: 15,
-                                      color: Colors.black54,
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.location_pin,
+                                          size: 15,
+                                          color: Colors.black54,
+                                        ),
+                                        SizedBox(width: 5),
+                                        Text(
+                                          w['address'],
+                                          style: TextStyle(
+                                            color: Colors.grey[700],
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      w['address'],
-                                      style: TextStyle(color: Colors.grey[700]),
+                                    SizedBox(height: 5),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.calendar_month,
+                                          size: 15,
+                                          color: Colors.black54,
+                                        ),
+                                        SizedBox(width: 5),
+                                        Text(
+                                          _formatDate(w['date']),
+                                          style: TextStyle(
+                                            color: Colors.grey[700],
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                                SizedBox(width: 30),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.calendar_month,
-                                      size: 15,
-                                      color: Colors.black54,
-                                    ),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      w['date'],
-                                      style: TextStyle(color: Colors.grey[700]),
-                                    ),
-                                  ],
+                                ElevatedButton(
+                                  onPressed: () => openMap(lat, lng),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: const CircleBorder(),
+                                    padding: const EdgeInsets.all(12),
+                                  ),
+                                  child: const Icon(Icons.directions, size: 20),
                                 ),
                               ],
-                            ),
-                            const SizedBox(height: 12),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () => openMap(lat, lng),
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                child: const Text("Arahkan Lokasi"),
-                              ),
                             ),
                           ],
                         ),

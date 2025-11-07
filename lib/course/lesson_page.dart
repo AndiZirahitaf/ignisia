@@ -1,5 +1,6 @@
 // import 'package:elearning/data.dart';
 
+import 'package:elearning/app_theme.dart';
 import 'package:elearning/course/course_detail.dart';
 
 import 'package:flutter/material.dart';
@@ -139,8 +140,14 @@ class _LessonPageState extends State<LessonPage> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: -5.0,
-        foregroundColor: Colors.black,
-        title: Text(widget.courseName, style: TextStyle(fontFamily: 'Trocchi')),
+        foregroundColor: Colors.white,
+        title: Text(
+          widget.courseName,
+          style: TextStyle(
+            fontFamily: 'Playfair Display',
+            fontWeight: FontWeight.w900,
+          ),
+        ),
 
         leading: IconButton(
           // padding: const EdgeInsets.only(left: 12) ,
@@ -149,7 +156,7 @@ class _LessonPageState extends State<LessonPage> {
           onPressed: () => Navigator.of(context).pop(true),
         ),
 
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.dark,
       ),
 
       body: SafeArea(
