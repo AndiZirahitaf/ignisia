@@ -1,7 +1,5 @@
 // import 'package:elearning/data.dart';
-import 'package:elearning/certificate_page.dart';
 import 'package:elearning/course/course_detail.dart';
-import 'package:elearning/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../api/api.dart';
@@ -24,7 +22,6 @@ class _MyCoursesState extends State<MyCourses> {
     loadUserDataAndCourses();
   }
 
-  // Gabungkan loading userId & courses
   Future<void> loadUserDataAndCourses() async {
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
@@ -73,10 +70,7 @@ class _MyCoursesState extends State<MyCourses> {
   @override
   Widget build(BuildContext context) {
     Widget _buildStatusChip(int completed, int total) {
-      final isCompleted =
-          completed >= total && total > 0; // Cek apakah sudah completed
-
-      // Tentukan teks dan warna berdasarkan status
+      final isCompleted = completed >= total && total > 0;
       final String text = isCompleted ? 'Completed' : 'Ongoing';
       final Color backgroundColor = isCompleted
           ? Colors.green.shade100
@@ -88,9 +82,8 @@ class _MyCoursesState extends State<MyCourses> {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color:
-              backgroundColor, // Warna background (Orange muda atau Hijau muda)
-          borderRadius: BorderRadius.circular(10), // Border radius
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: foregroundColor.withOpacity(0.5),
             width: 0.5,
@@ -101,14 +94,12 @@ class _MyCoursesState extends State<MyCourses> {
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color:
-                foregroundColor, // Warna teks (Orange gelap atau Hijau gelap)
+            color: foregroundColor,
           ),
         ),
       );
     }
 
-    // final ownedCourses = courseList.where((c) => c.owned == true).toList();
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -126,117 +117,104 @@ class _MyCoursesState extends State<MyCourses> {
               ),
             ),
             SizedBox(height: 20),
-            // Text("data"),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     ScaffoldMessenger.of(context).showSnackBar(
-            //       const SnackBar(content: Text('Testing notification...')),
-            //     );
-            //     NotificationService.instance.showNotification(
-            //       id: 0,
-            //       title: "Ayo Lanjutkan Belajarmu!",
-            //       body: "This is a test notification from Ignisia.",
-            //     );
-            //   },
-            //   child: Text("Test Notification", style: TextStyle(fontSize: 16)),
-            // ),
-            ListView.builder(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              itemCount: ownedCourses.length,
-              itemBuilder: (context, index) {
-                final course = ownedCourses[index];
-                return GestureDetector(
-                  onTap: () async {
-                    // 👈 JADIKAN ASYNC
-                    // 1. Panggil push dan TUNGGU hasilnya
-                    final bool? statusUpdated = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CourseDetailPage(courseId: course['id']),
-                      ),
-                    );
+            isLoading
+                ? Center(child: CircularProgressIndicator())
+                : ownedCourses.isEmpty
+                ? Center(
+                    child: Text(
+                      'You have not enrolled in any courses yet.',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  )
+                : Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      itemCount: ownedCourses.length,
+                      itemBuilder: (context, index) {
+                        final course = ownedCourses[index];
+                        return GestureDetector(
+                          onTap: () async {
+                            final bool? statusUpdated = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    CourseDetailPage(courseId: course['id']),
+                              ),
+                            );
 
-                    // 2. Jika ada nilai balik (misalnya true), muat ulang data
-                    if (statusUpdated == true) {
-                      print(
-                        "Kembali dari Course Detail, memuat ulang MyCourses...",
-                      );
-                      setState(() => isLoading = true); // Tampilkan loading
-                      await handleOwnedCourses(
-                        userId,
-                      ); // Panggil fungsi muat ulang
-                    }
-                  }, // 👈 Tutup on
-                  child: Card(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    elevation: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              right: 12.0,
-                              left: 4.0,
-                            ),
-                            child: Icon(
-                              Icons.book,
-                              size: 30,
-                              color: Colors.blue,
-                            ),
-                          ),
-                          // const SizedBox(width: 12),
-                          Expanded(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              // mainAxisAlignment: MainAxisAlignment.center,
-                              // mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      course['title'],
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
+                            if (statusUpdated == true) {
+                              print(
+                                "Kembali dari Course Detail, memuat ulang MyCourses...",
+                              );
+                              setState(
+                                () => isLoading = true,
+                              ); // Tampilkan loading
+                              await handleOwnedCourses(userId);
+                            }
+                          },
+                          child: Card(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            elevation: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 12.0,
+                                      left: 4.0,
                                     ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      "Materi Dipelajari: ${course['completedLessons']}/${course['totalLessons']}",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey[700],
-                                      ),
+                                    child: Icon(
+                                      Icons.book,
+                                      size: 30,
+                                      color: Colors.blue,
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                              ],
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              course['title'],
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Text(
+                                              "Materi Dipelajari: ${course['completedLessons']}/${course['totalLessons']}",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.grey[700],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                      ],
+                                    ),
+                                  ),
+                                  _buildStatusChip(
+                                    course['completedLessons'],
+                                    course['totalLessons'],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          // const SizedBox(width: 8),
-                          // const Icon(
-                          //   Icons.arrow_forward_ios,
-                          //   size: 18,
-                          //   color: Colors.blue,
-                          // ),
-                          _buildStatusChip(
-                            course['completedLessons'],
-                            course['totalLessons'],
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                   ),
-                );
-              },
-            ),
           ],
         ),
       ),

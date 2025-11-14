@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:elearning/home.dart';
 import 'package:elearning/course/mycourses.dart';
 import 'package:elearning/profile.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RootWithBottomNav extends StatefulWidget {
   final int? initialIndex;

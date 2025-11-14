@@ -74,13 +74,11 @@ class _LoginPageState extends State<LoginPage> {
             behavior: SnackBarBehavior.floating,
           ),
         );
-        // navigasi ke home
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const RootWithBottomNav()),
         );
       } else {
-        // jika login gagal (pesan dari backend)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(response['message'] ?? 'Login gagal.'),
@@ -90,7 +88,6 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } catch (e) {
-      // jika ada error koneksi / server
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Terjadi kesalahan. Coba lagi.'),

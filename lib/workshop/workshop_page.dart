@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../api/api.dart'; // <-- pastikan path sesuai
+import '../api/api.dart';
 
 class WorkshopPage extends StatefulWidget {
   const WorkshopPage({super.key});
@@ -74,13 +74,6 @@ class _WorkshopPageState extends State<WorkshopPage> {
     });
   }
 
-  void openMap(double lat, double lng) async {
-    final url = "https://www.google.com/maps/search/?api=1&query=$lat,$lng";
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-    }
-  }
-
   String _formatDate(dynamic datetime) {
     final dateTime = DateTime.parse(datetime);
     final formatter = DateFormat('dd MMM yyyy', 'id_ID');
@@ -148,7 +141,6 @@ class _WorkshopPageState extends State<WorkshopPage> {
                                     height: 80,
                                     child: GestureDetector(
                                       onTap: () {
-                                        // Sheet tetap seperti sebelumnya
                                         showModalBottomSheet(
                                           context: context,
                                           shape: const RoundedRectangleBorder(
@@ -213,10 +205,6 @@ class _WorkshopPageState extends State<WorkshopPage> {
                     itemCount: workshops.length,
                     itemBuilder: (context, index) {
                       final w = workshops[index];
-                      final lat =
-                          double.tryParse(w['latitude'].toString()) ?? 0;
-                      final lng =
-                          double.tryParse(w['longitude'].toString()) ?? 0;
 
                       return Container(
                         margin: const EdgeInsets.only(bottom: 16),
@@ -285,7 +273,26 @@ class _WorkshopPageState extends State<WorkshopPage> {
                                   ],
                                 ),
                                 ElevatedButton(
-                                  onPressed: () => openMap(lat, lng),
+                                  onPressed: () async {
+                                    final Uri uri = Uri.parse(
+                                      'https://www.google.com/maps/dir/?api=1&destination=${w['latitude']},${w['longitude']}&travelmode=driving',
+                                    );
+
+                                    if (await canLaunchUrl(uri)) {
+                                      await launchUrl(
+                                        uri,
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                    } else {
+                                      final fallbackUri = Uri.parse(
+                                        'https://www.google.com/maps/search/?api=1&query=${w['latitude']},${w['longitude']}',
+                                      );
+                                      await launchUrl(
+                                        fallbackUri,
+                                        mode: LaunchMode.platformDefault,
+                                      );
+                                    }
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     shape: const CircleBorder(),
                                     padding: const EdgeInsets.all(12),
@@ -338,7 +345,15 @@ class _WorkshopPageState extends State<WorkshopPage> {
               final Uri uri = Uri.parse(
                 'https://www.google.com/maps/dir/?api=1&destination=${w['latitude']},${w['longitude']}&travelmode=driving',
               );
-              await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              } else {
+                final fallbackUri = Uri.parse(
+                  'https://www.google.com/maps/search/?api=1&query=${w['latitude']},${w['longitude']}',
+                );
+                await launchUrl(fallbackUri, mode: LaunchMode.platformDefault);
+              }
             },
             icon: const Icon(Icons.directions),
             label: const Text('Arahkan ke Lokasi'),

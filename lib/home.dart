@@ -191,23 +191,6 @@ class HomeState extends State<Home> {
         ),
         backgroundColor: Color.fromARGB(255, 255, 254, 252),
         foregroundColor: Colors.black,
-        // actions: [
-        //   Padding(
-        //     padding: const EdgeInsets.only(right: 20.0),
-        //     child: GestureDetector(
-        //       onTap: () {
-        //         // TODO: handle avatar tap (navigate to profile, open menu, etc.)
-        //       },
-        //       child: CircleAvatar(
-        //         radius: 25,
-        //         // Use backgroundImage: NetworkImage('...') to show a photo instead of an initial
-        //         backgroundImage: Image.asset('assets/images/profile.png').image,
-        //         backgroundColor: const Color(0xFFFFBFB6),
-        //         // child: Image.asset('assets/images/profile.png'),
-        //       ),
-        //     ),
-        //   ),
-        // ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -219,7 +202,6 @@ class HomeState extends State<Home> {
               padding: const EdgeInsets.only(top: 20.0),
               child: Stack(
                 alignment: Alignment.topRight,
-                // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Image.asset(
                     'assets/images/star_light.png',
@@ -759,7 +741,6 @@ class HomeState extends State<Home> {
                                                 ),
                                                 const SizedBox(width: 4),
                                                 Text(
-                                                  // Gunakan fungsi untuk memformat HANYA tanggal
                                                   _formatTime(
                                                     seminar['datetime'],
                                                   ),
@@ -777,7 +758,6 @@ class HomeState extends State<Home> {
                                     ),
                                   ),
 
-                                  // 3. Icon Chevron (Trailing)
                                   const Icon(
                                     Icons.chevron_right,
                                     color: Colors.grey,

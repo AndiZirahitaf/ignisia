@@ -1,15 +1,11 @@
-import 'package:elearning/app_theme.dart';
-import 'package:elearning/certificate_page.dart';
+import 'package:elearning/cert/certificate_page.dart';
 import 'package:elearning/course/checkout_page.dart';
 import 'package:elearning/course/lesson_page.dart';
 import 'package:elearning/notification_service.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import '../api/api.dart';
-
-// import 'data.dart';
 
 class CourseDetailPage extends StatefulWidget {
   final int courseId;
@@ -26,6 +22,7 @@ class CourseDetailPageState extends State<CourseDetailPage> {
   List<dynamic> lessons = [];
   bool isOwned = false;
   int userId = 0;
+  String? userName;
 
   final Map<String, Gradient> courseGradients = {
     "course_1": RadialGradient(
@@ -76,21 +73,22 @@ class CourseDetailPageState extends State<CourseDetailPage> {
     loadUserDataAndCourse();
   }
 
-  // Fungsi yang sudah ada (tidak perlu diubah)
   Future<void> loadUserDataAndCourse() async {
-    // ... (Logika pemuatan data tetap sama)
     final prefs = await SharedPreferences.getInstance();
     final id = prefs.getInt('user_id') ?? 0;
+    final userName = prefs.getString('user_name') ?? 'Your Name';
 
     if (!mounted) return;
-    setState(() => userId = id);
+    setState(() {
+      this.userName = userName;
+      userId = id;
+    });
 
     final ownedCourses = await getOwnedCourses(userId);
     final owned = ownedCourses.any((c) => c['id'] == widget.courseId);
 
     final courseFetched = await getCourseDetail(widget.courseId);
 
-    // **Ini bagian penting: Memuat data pelajaran terbaru dari API**
     final lessonsFetched = await getLessons(widget.courseId, userId);
 
     if (!mounted) return;
@@ -101,7 +99,6 @@ class CourseDetailPageState extends State<CourseDetailPage> {
       lessons = lessonsFetched;
       isLoadingCourse = false;
 
-      // ... (Logika unlock lesson pertama tetap sama)
       if (isOwned && lessons.isNotEmpty) {
         lessons[0]['locked'] = false;
       }
@@ -122,9 +119,7 @@ class CourseDetailPageState extends State<CourseDetailPage> {
     }
   }
 
-  // Fungsi Navigasi yang Dimodifikasi
   void _navigateToLesson(lesson, int index) async {
-    // 1. Panggil push dan TUNGGU hasilnya (sampai LessonPage di-pop)
     final bool? lessonUpdated = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => LessonPage(
@@ -132,16 +127,14 @@ class CourseDetailPageState extends State<CourseDetailPage> {
           lessons: lessons,
           lessonIndex: index,
           userId: userId,
-          courseId: widget.courseId, // Tambahkan courseId untuk keamanan
+          courseId: widget.courseId,
         ),
       ),
     );
 
-    // 2. Jika LessonPage mengembalikan nilai 'true', panggil ulang
-    //    loadUserDataAndCourse() untuk me-refresh list lesson.
     if (lessonUpdated == true) {
       print("Lesson Page Selesai, Memuat ulang status lesson...");
-      setState(() => isLoadingCourse = true); // Tampilkan loading sebentar
+      setState(() => isLoadingCourse = true);
       await loadUserDataAndCourse();
       _checkAndNotifyCourseCompleted();
     }
@@ -158,8 +151,7 @@ class CourseDetailPageState extends State<CourseDetailPage> {
       if (!mounted) return;
       setState(() {
         isOwned = true;
-        if (lessons.isNotEmpty)
-          lessons[0]['locked'] = false; // unlock first lesson
+        if (lessons.isNotEmpty) lessons[0]['locked'] = false;
       });
     } else {
       ScaffoldMessenger.of(
@@ -186,12 +178,8 @@ class CourseDetailPageState extends State<CourseDetailPage> {
     }
     final theme = Theme.of(context);
     return WillPopScope(
-      // 👈 BUNGKUS DENGAN WILLPOPSCOPE
       onWillPop: () async {
-        // Ketika tombol back (pop) ditekan, kembalikan 'true'.
-        // Ini akan diterima oleh MyCourses yang memanggil push.
         Navigator.of(context).pop(true);
-        // Mengembalikan 'false' untuk mencegah Navigator pop lagi secara otomatis.
 
         return false;
       },
@@ -202,11 +190,6 @@ class CourseDetailPageState extends State<CourseDetailPage> {
               backgroundColor: Color.fromARGB(255, 17, 17, 17),
               pinned: true,
               expandedHeight: 200,
-              // title: Text("Asdasd"),
-              // actions: [
-              //   IconButton(icon: const Icon(Icons.share), onPressed: () {}),
-              //   IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
-              // ],
               flexibleSpace: FlexibleSpaceBar(
                 // centerTitle: true,
                 titlePadding: const EdgeInsets.symmetric(
@@ -214,7 +197,6 @@ class CourseDetailPageState extends State<CourseDetailPage> {
                   vertical: 15,
                 ),
                 title: Container(
-                  // padding: const EdgeInsets.symmetric(horizontal: 6),
                   child: Text(
                     course['title'],
                     style: TextStyle(
@@ -232,18 +214,12 @@ class CourseDetailPageState extends State<CourseDetailPage> {
                     decoration: BoxDecoration(
                       gradient:
                           courseGradients[course['logo_url']] ??
-                          courseGradients
-                              .values
-                              .first, // fallback kalau tidak ada
+                          courseGradients.values.first,
                     ),
-                    // Align the image first, then apply a translation on x/y axis.
                     child: Align(
                       alignment: Alignment.bottomRight,
                       child: Transform.translate(
-                        offset: const Offset(
-                          -20,
-                          10,
-                        ), // x, y in logical pixels (adjust as needed)
+                        offset: const Offset(-20, 10),
                         child: Opacity(
                           opacity: 0.8,
                           child: Image.asset(
@@ -266,7 +242,6 @@ class CourseDetailPageState extends State<CourseDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 6),
-                    // JUMLAH LESSON & HARGA
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -307,8 +282,6 @@ class CourseDetailPageState extends State<CourseDetailPage> {
                                 : Container(),
                           ],
                         ),
-
-                        // const SizedBox(width: 16),
                         isOwned
                             ? Row(
                                 children: [
@@ -474,8 +447,6 @@ class CourseDetailPageState extends State<CourseDetailPage> {
                           ),
                           child: Material(
                             color: const Color.fromARGB(31, 153, 153, 153),
-
-                            // color: AppColors.secondary,
                             child: ListTile(
                               title: Text(
                                 lesson['title'],
@@ -496,7 +467,6 @@ class CourseDetailPageState extends State<CourseDetailPage> {
                               ),
                               onTap: isLessonUnlocked
                                   ? () async {
-                                      // *** GANTI DENGAN FUNGSI BARU ***
                                       _navigateToLesson(lesson, index);
                                     }
                                   : null,
@@ -548,6 +518,80 @@ class CourseDetailPageState extends State<CourseDetailPage> {
                         );
                       },
                     ),
+
+                    Text(
+                      'Sertifikat',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    isOwned && completedLessons == totalLessons
+                        ? ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => CertificatePage(
+                                    courseName: course['title'],
+                                    userName: userName ?? 'Your Name',
+                                    completedDate: (() {
+                                      final lastCompleted = lessons.reversed
+                                          .firstWhere(
+                                            (l) => l['completed'] == true,
+                                            orElse: () => null,
+                                          );
+                                      if (lastCompleted == null)
+                                        return DateTime.now();
+
+                                      final val =
+                                          lastCompleted['completed_at'] ??
+                                          lastCompleted['completedAt'] ??
+                                          lastCompleted['completedDate'] ??
+                                          lastCompleted['completed_on'] ??
+                                          lastCompleted['completedOn'];
+
+                                      if (val == null) return DateTime.now();
+                                      if (val is DateTime) return val;
+                                      if (val is int) {
+                                        if (val > 1000000000000) {
+                                          return DateTime.fromMillisecondsSinceEpoch(
+                                            val,
+                                          );
+                                        } else {
+                                          return DateTime.fromMillisecondsSinceEpoch(
+                                            val * 1000,
+                                          );
+                                        }
+                                      }
+                                      if (val is String) {
+                                        final parsed = DateTime.tryParse(val);
+                                        return parsed ?? DateTime.now();
+                                      }
+                                      return DateTime.now();
+                                    })(),
+                                  ),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.card_membership),
+                            label: const Text('Lihat Sertifikat Saya'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepPurple,
+                              foregroundColor: Colors.white,
+                              minimumSize: const Size.fromHeight(48),
+                            ),
+                          )
+                        : Text(
+                            isOwned
+                                ? 'Selesaikan semua materi untuk mendapatkan sertifikat.'
+                                : 'Beli kursus ini dan selesaikan semua materi untuk mendapatkan sertifikat.',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                            ),
+                          ),
                   ],
                 ),
               ),

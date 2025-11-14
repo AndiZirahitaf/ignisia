@@ -73,7 +73,6 @@ class _SearchPageState extends State<SearchPage> {
     loadUserAndCourses();
     fetchCategories();
     if (widget.autoFocus) {
-      // kasih sedikit delay biar build() selesai dulu
       Future.delayed(Duration(milliseconds: 300), () {
         FocusScope.of(context).requestFocus(_focusNode);
       });
@@ -196,7 +195,6 @@ class _SearchPageState extends State<SearchPage> {
                 focusNode: _focusNode,
                 autofocus: widget.autoFocus,
                 decoration: _inputDecoration('Cari Kursus...').copyWith(
-                  // Tambahkan ikon "clear" di kanan
                   suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(
                           icon: const Icon(CupertinoIcons.clear_circled_solid),
@@ -217,7 +215,6 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
 
-            // 🔹 Category filter (multi-select)
             SizedBox(
               height: 50,
               child: ListView.builder(
@@ -251,7 +248,6 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
 
-            // 🔹 GridView hasil search
             SizedBox(height: 10),
             Expanded(
               child: filteredCourses.isEmpty
@@ -262,21 +258,20 @@ class _SearchPageState extends State<SearchPage> {
                             crossAxisCount: 2,
                             mainAxisSpacing: 20,
                             crossAxisSpacing: 5,
-                            // childAspectRatio: 0.7,
                           ),
                       itemCount: filteredCourses.length,
                       itemBuilder: (context, index) {
                         final course = filteredCourses[index];
                         final isOwned = ownedCourseIds.contains(course['id']);
-                        final lessons = course['lessons'] is List
-                            ? List.from(course['lessons'])
-                            : <dynamic>[];
-                        final completed = lessons
-                            .where((l) => l['completed'] == true)
-                            .length;
-                        final progress = lessons.isEmpty
-                            ? 0.0
-                            : completed / lessons.length;
+                        // final lessons = course['lessons'] is List
+                        //     ? List.from(course['lessons'])
+                        //     : <dynamic>[];
+                        // final completed = lessons
+                        //     .where((l) => l['completed'] == true)
+                        //     .length;
+                        // final progress = lessons.isEmpty
+                        //     ? 0.0
+                        //     : completed / lessons.length;
                         final priceText = course['price'] == 0
                             ? 'Gratis'
                             : 'Rp ${course['price'].toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (match) => '.')}';
@@ -298,9 +293,7 @@ class _SearchPageState extends State<SearchPage> {
                                 decoration: BoxDecoration(
                                   gradient:
                                       courseGradients[course['logo_url']] ??
-                                      courseGradients
-                                          .values
-                                          .first, // fallback kalau tidak ada
+                                      courseGradients.values.first,
                                 ),
 
                                 child: Stack(

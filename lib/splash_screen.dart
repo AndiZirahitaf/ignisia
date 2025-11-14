@@ -39,11 +39,9 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        // color: const Color.fromARGB(255, 237, 225, 200),
         child: Center(
           child: Stack(
             children: [
-              // Image.asset('lib/assets/ignisia.png'),
               Text(
                 'Ignisia',
                 style: TextStyle(

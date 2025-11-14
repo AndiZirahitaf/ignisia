@@ -15,8 +15,6 @@ class SeminarDetailPage extends StatefulWidget {
 class _SeminarDetailPageState extends State<SeminarDetailPage> {
   Map<String, dynamic> seminar = {};
   bool _isLoading = true;
-  bool _isFavorite = false;
-  bool _expandedDescription = false;
   String selectedZone = 'WIB';
 
   @override
@@ -60,19 +58,6 @@ class _SeminarDetailPageState extends State<SeminarDetailPage> {
     return "${formatter.format(localized)} $zone";
   }
 
-  // void _toggleFavorite() {
-  //   setState(() => _isFavorite = !_isFavorite);
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Text(
-  //         _isFavorite ? 'Ditambahkan ke favorit' : 'Dihapus dari favorit',
-  //       ),
-  //       duration: const Duration(milliseconds: 800),
-  //       behavior: SnackBarBehavior.floating,
-  //     ),
-  //   );
-  // }
-
   void _register() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -88,9 +73,6 @@ class _SeminarDetailPageState extends State<SeminarDetailPage> {
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-
-    final dateTime = DateTime.parse(seminar['datetime']);
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -102,15 +84,6 @@ class _SeminarDetailPageState extends State<SeminarDetailPage> {
             fontFamily: 'Playfair Display',
           ),
         ),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(
-        //       _isFavorite ? Icons.favorite : Icons.favorite_border,
-        //       color: _isFavorite ? Colors.red : Colors.black54,
-        //     ),
-        //     onPressed: _toggleFavorite,
-        //   ),
-        // ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 100.0),
@@ -210,7 +183,6 @@ class _SeminarDetailPageState extends State<SeminarDetailPage> {
 
               const SizedBox(height: 70),
 
-              // Tombol daftar
               ElevatedButton(
                 onPressed: _register,
                 style: ElevatedButton.styleFrom(

@@ -46,6 +46,7 @@ dependencies:
   screenshot: ^3.0.0
   flutter_local_notifications: ^19.5.0
   timezone: ^0.10.1
+  open_file: ^3.5.10
 
   # firebase_core: ^4.2.1
   # firebase_messaging: ^16.0.4
@@ -86,6 +87,8 @@ flutter:
     - assets/images/
     - lib/assets/
     - lib/assets/ignisia.png
+    - lib/assets/ttd.png
+    - lib/assets/cert_frame.png
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

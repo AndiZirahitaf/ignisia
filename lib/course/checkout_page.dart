@@ -1,7 +1,6 @@
 import 'package:elearning/root_bottom_nav.dart';
 import 'package:flutter/material.dart';
-import 'package:elearning/course/mycourses.dart';
-import 'package:intl/intl.dart'; // buat format angka ribuan
+import 'package:intl/intl.dart';
 import '../api/api.dart';
 
 class CheckoutPage extends StatefulWidget {
@@ -48,7 +47,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
   }
 
-  // simulasi nilai tukar
   final Map<String, double> _exchangeRates = {
     "IDR": 1.0,
     "USD": 0.000064, // 1 IDR = 0.000064 USD
@@ -111,13 +109,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "Nama: ",
-                        style: const TextStyle(
-                          fontSize: 15,
-                          // fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text("Nama: ", style: const TextStyle(fontSize: 15)),
                       Text(
                         widget.course['title'],
                         style: const TextStyle(
@@ -127,17 +119,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10), // spacing between rows
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "Harga: ",
-                        style: const TextStyle(
-                          fontSize: 15,
-                          // fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      Text("Harga: ", style: const TextStyle(fontSize: 15)),
                       Text(
                         "$currencySymbol${formatter.format(convertedPrice)} $selectedCurrency",
                         style: const TextStyle(
@@ -154,9 +140,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
             const SizedBox(height: 20),
 
             DropdownButtonFormField<String>(
-              // isDense: true,
               dropdownColor: Colors.white,
-              value: selectedCurrency,
+              initialValue: selectedCurrency,
               isExpanded: false,
               decoration: _inputDecoration("Pilih Mata Uang"),
               items: const [
@@ -175,7 +160,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
             DropdownButtonFormField<String>(
               dropdownColor: Colors.white,
-              value: selectedMethod,
+              initialValue: selectedMethod,
               decoration: _inputDecoration("Metode Pembayaran"),
               items: const [
                 DropdownMenuItem(value: "DANA", child: Text("DANA")),
@@ -195,7 +180,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size.fromHeight(50),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(36), // button radius
+                  borderRadius: BorderRadius.circular(36),
                 ),
               ),
               child: const Text("Bayar Sekarang"),

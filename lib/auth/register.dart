@@ -55,7 +55,6 @@ class _RegisterPageState extends State<RegisterPage> {
       );
 
       if (response['message'] == "Registrasi berhasil") {
-        // tampilkan snackbar sebelum redirect
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Registrasi berhasil! Silakan login.'),
@@ -64,10 +63,8 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         );
 
-        // tunggu sedikit agar user lihat snackbar
         await Future.delayed(const Duration(seconds: 2));
 
-        // redirect ke login page
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const LoginPage()),

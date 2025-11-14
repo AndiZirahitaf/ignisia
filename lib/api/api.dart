@@ -3,7 +3,6 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-// import 'package:firebase_messaging/firebase_messaging.dart';
 
 String ApiUrl = 'http://10.0.2.2:3000/api/';
 
@@ -252,46 +251,3 @@ Future<List<dynamic>> getCategories() async {
     throw Exception('Failed to load categories');
   }
 }
-
-// // ==================== FIREBASE MESSAGING (Flutter side) ====================
-
-// // Ambil device token FCM
-// Future<String?> getDeviceToken() async {
-//   FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-//   NotificationSettings settings = await messaging.requestPermission(
-//     alert: true,
-//     badge: true,
-//     sound: true,
-//   );
-
-//   if (settings.authorizationStatus == AuthorizationStatus.denied) {
-//     print("User menolak push notification");
-//     return null;
-//   }
-
-//   String? token = await messaging.getToken();
-//   print("Device Token: $token");
-//   return token;
-// }
-
-// // Kirim device token ke backend
-// Future<void> registerDeviceToken(int userId, String token) async {
-//   await http.post(
-//     Uri.parse("http://YOUR_SERVER_ADDRESS/register-token"),
-//     body: {"user_id": userId.toString(), "token": token},
-//   );
-// }
-
-// // Listener untuk menerima notif saat app foreground
-// void setupFCMListener() {
-//   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-//     print("Terima notifikasi (onMessage): ${message.notification?.title}");
-//     print("Body: ${message.notification?.body}");
-//     // Tampilkan SnackBar, dialog, atau update UI via state management
-//   });
-
-//   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-//     print("User buka app dari notif: ${message.notification?.title}");
-//   });
-// }

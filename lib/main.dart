@@ -17,14 +17,10 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final userId = prefs.getInt('user_id') ?? 0;
 
-  // Request permission exact alarm
   if (await Permission.scheduleExactAlarm.isDenied) {
     await Permission.scheduleExactAlarm.request();
   }
 
-  await NotificationService.instance.scheduleMidnightNotification();
-
-  // Schedule daily reminder
   await NotificationService.instance.scheduleAdvancedDailyReminder(userId);
   runApp(const MyApp());
 }

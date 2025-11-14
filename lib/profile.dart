@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:elearning/auth/login.dart';
-import 'package:elearning/api/api.dart'; // getUser & updateUser
+import 'package:elearning/api/api.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -16,7 +16,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   String _name = '';
   String _email = '';
-  String? _avatarPath; // bisa local file OR network URL
+  String? _avatarPath;
   int? _userId;
   bool _isLoading = true;
 
@@ -376,109 +376,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   Divider(),
                   const SizedBox(height: 10),
 
-                  // Container(
-                  //   padding: const EdgeInsets.only(bottom: 8),
-                  //   child: Row(
-                  //     children: [
-                  //       Padding(
-                  //         padding: const EdgeInsets.symmetric(
-                  //           vertical: 8.0,
-                  //           horizontal: 12,
-                  //         ),
-                  //         child: Icon(
-                  //           Icons.mail_outline,
-                  //           color: Colors.black26,
-                  //         ),
-                  //       ),
-                  //       SizedBox(width: 10),
-                  //       Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           Text(
-                  //             "Email",
-                  //             style: TextStyle(
-                  //               fontSize: 15,
-                  //               fontWeight: FontWeight.w400,
-                  //               color: const Color.fromARGB(255, 160, 160, 160),
-                  //             ),
-                  //           ),
-                  //           Column(
-                  //             crossAxisAlignment: CrossAxisAlignment.start,
-                  //             children: [
-                  //               Text(
-                  //                 _email,
-                  //                 style: TextStyle(
-                  //                   fontSize: 17,
-                  //                   fontWeight: FontWeight.w200,
-                  //                 ),
-                  //               ),
-                  //               Container(
-                  //                 width:
-                  //                     MediaQuery.of(context).size.width - 100,
-                  //                 child: const Divider(
-                  //                   color: Color.fromARGB(66, 167, 167, 167),
-                  //                   thickness: 2,
-                  //                 ),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
-
-                  // Container(
-                  //   padding: const EdgeInsets.only(bottom: 8),
-                  //   child: Row(
-                  //     children: [
-                  //       Padding(
-                  //         padding: const EdgeInsets.symmetric(
-                  //           vertical: 8.0,
-                  //           horizontal: 12,
-                  //         ),
-                  //         child: Icon(
-                  //           Icons.mail_outline,
-                  //           color: Colors.black26,
-                  //         ),
-                  //       ),
-                  //       SizedBox(width: 10),
-                  //       Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           Text(
-                  //             "Email",
-                  //             style: TextStyle(
-                  //               fontSize: 15,
-                  //               fontWeight: FontWeight.w400,
-                  //               color: const Color.fromARGB(255, 160, 160, 160),
-                  //             ),
-                  //           ),
-                  //           Column(
-                  //             crossAxisAlignment: CrossAxisAlignment.start,
-                  //             children: [
-                  //               Text(
-                  //                 _email,
-                  //                 style: TextStyle(
-                  //                   fontSize: 17,
-                  //                   fontWeight: FontWeight.w200,
-                  //                 ),
-                  //               ),
-                  //               Container(
-                  //                 width:
-                  //                     MediaQuery.of(context).size.width - 100,
-                  //                 child: const Divider(
-                  //                   color: Color.fromARGB(66, 167, 167, 167),
-                  //                   thickness: 2,
-                  //                 ),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
