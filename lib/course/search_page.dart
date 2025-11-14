@@ -263,15 +263,6 @@ class _SearchPageState extends State<SearchPage> {
                       itemBuilder: (context, index) {
                         final course = filteredCourses[index];
                         final isOwned = ownedCourseIds.contains(course['id']);
-                        // final lessons = course['lessons'] is List
-                        //     ? List.from(course['lessons'])
-                        //     : <dynamic>[];
-                        // final completed = lessons
-                        //     .where((l) => l['completed'] == true)
-                        //     .length;
-                        // final progress = lessons.isEmpty
-                        //     ? 0.0
-                        //     : completed / lessons.length;
                         final priceText = course['price'] == 0
                             ? 'Gratis'
                             : 'Rp ${course['price'].toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (match) => '.')}';
@@ -390,10 +381,7 @@ class _SearchPageState extends State<SearchPage> {
       ),
       filled: true,
       fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(
-        vertical: 14,
-        horizontal: 20, // 🔹 padding kiri-kanan biar kursor gak nempel
-      ),
+      contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
     );
   }
 }
